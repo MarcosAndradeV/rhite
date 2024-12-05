@@ -6,3 +6,4 @@ edition = "2021"
 [dependencies]
 prelude = {path = "../prelude"}
 mar = { path = "../mar" }
+rand = "0.8.5"
