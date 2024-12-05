@@ -1,3 +1,4 @@
+use noise::{NoiseFn, Perlin};
 use prelude::*;
 use std::default::Default;
 use std::fmt;
@@ -84,6 +85,25 @@ impl MapBuilder {
             block_size,
             blocks,
         })
+    }
+    pub fn perlin_noise(mut self, seed: u32) -> Self {
+        let perlin = Perlin::new(seed);
+
+        for y in 0..self.height {
+            for x in 0..self.width {
+                let noise_value =
+                    perlin.get([x as f64 / self.width as f64, y as f64 / self.height as f64]);
+                let normalized_value = (noise_value + 1.0) / 2.0;
+                let i = x + self.width * y;
+                if let Some(c) = self.blocks.get_mut(i) {
+                    let color = match normalized_value {
+                        _ => lerp(colors::GOLD, colors::RED, normalized_value),
+                    };
+                    c.color = color;
+                }
+            }
+        }
+        self
     }
     pub fn set(mut self, x: usize, y: usize, color: Color) -> Self {
         let i = x + self.width * y;
@@ -175,5 +195,14 @@ impl MapBuilder {
             block_size: self.block_size,
             blocks: self.blocks.into(),
         }
+    }
+}
+
+fn lerp(a: Color, b: Color, t: f64) -> Color {
+    Color {
+        r: (a.r as f64 * (1.0 - t) + b.r as f64 * t) as u8,
+        g: (a.g as f64 * (1.0 - t) + b.g as f64 * t) as u8,
+        b: (a.b as f64 * (1.0 - t) + b.b as f64 * t) as u8,
+        a: (a.a as f64 * (1.0 - t) + b.a as f64 * t) as u8,
     }
 }
