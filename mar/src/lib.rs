@@ -1,17 +1,18 @@
 use prelude::*;
 use std::default::Default;
 use std::fmt;
+use std::rc::Rc;
 
 pub struct Map {
     _width: usize,
     _height: usize,
     block_size: usize,
-    blocks: Vec<Block>,
+    blocks: Rc<[Block]>,
 }
 
 impl Map {
     pub unsafe fn draw(&self) {
-        for block in &self.blocks {
+        for block in self.blocks.iter() {
             DrawRectangleV(
                 block.pos,
                 Vector2 {
@@ -96,6 +97,8 @@ impl MapBuilder {
             let i = x + self.width * y;
             if let Some(c) = self.blocks.get_mut(i) {
                 c.color = *color;
+            } else {
+                return self;
             }
         }
         self
@@ -105,6 +108,8 @@ impl MapBuilder {
             let i = x + self.width * y;
             if let Some(c) = self.blocks.get_mut(i) {
                 c.color = color;
+            } else {
+                return self;
             }
         }
         self
@@ -114,16 +119,43 @@ impl MapBuilder {
             let i = x + self.width * y;
             if let Some(c) = self.blocks.get_mut(i) {
                 c.color = color;
+            } else {
+                return self;
             }
         }
         self
+    }
+
+    pub fn fill_horizontal_strip(
+        mut self,
+        y: usize,
+        start_x: usize,
+        end_x: usize,
+        color: Color,
+    ) -> Self {
+        for x in start_x..end_x {
+            let i = x + self.width * y;
+            if let Some(c) = self.blocks.get_mut(i) {
+                c.color = color;
+            } else {
+                return self;
+            }
+        }
+        self
+    }
+
+    pub fn apply<F>(self, f: F) -> Self
+    where
+        F: FnOnce(Self) -> Self,
+    {
+        f(self)
     }
     pub fn build(self) -> Map {
         Map {
             _width: self.width,
             _height: self.height,
             block_size: self.block_size,
-            blocks: self.blocks,
+            blocks: self.blocks.into(),
         }
     }
 }
