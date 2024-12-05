@@ -96,10 +96,7 @@ impl MapBuilder {
                 let normalized_value = (noise_value + 1.0) / 2.0;
                 let i = x + self.width * y;
                 if let Some(c) = self.blocks.get_mut(i) {
-                    let color = match normalized_value {
-                        _ => lerp(colors::GOLD, colors::RED, normalized_value),
-                    };
-                    c.color = color;
+                    c.color = color_lerp(colors::GOLD, colors::RED, normalized_value);
                 }
             }
         }
@@ -198,11 +195,3 @@ impl MapBuilder {
     }
 }
 
-fn lerp(a: Color, b: Color, t: f64) -> Color {
-    Color {
-        r: (a.r as f64 * (1.0 - t) + b.r as f64 * t) as u8,
-        g: (a.g as f64 * (1.0 - t) + b.g as f64 * t) as u8,
-        b: (a.b as f64 * (1.0 - t) + b.b as f64 * t) as u8,
-        a: (a.a as f64 * (1.0 - t) + b.a as f64 * t) as u8,
-    }
-}
