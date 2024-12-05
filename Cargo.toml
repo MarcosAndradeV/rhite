@@ -1,0 +1,5 @@
+[workspace]
+
+members = [ "mar", "prelude","rhite"]
+
+resolver = "2"

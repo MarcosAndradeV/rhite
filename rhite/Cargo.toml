@@ -1,0 +1,8 @@
+[package]
+name = "rhite"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+prelude = {path = "../prelude"}
+mar = { path = "../mar" }
