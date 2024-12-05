@@ -19,6 +19,7 @@ fn main() -> Result<(), ()> {
             .fill_horizontal(0, colors::GRAY)
             .apply(|mb| mb.fill_horizontal(20, colors::RED))
             .fill_horizontal_strip(2, 5, 17, colors::GOLD)
+            .fill_vertical_strip(2, 5, 17, colors::SKYBLUE)
             .build();
 
         let bg_color = GetColor(BACKGROUND_COLOR_HEX);

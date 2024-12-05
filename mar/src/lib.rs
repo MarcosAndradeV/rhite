@@ -144,6 +144,24 @@ impl MapBuilder {
         self
     }
 
+    pub fn fill_vertical_strip(
+        mut self,
+        x: usize,
+        start_y: usize,
+        end_y: usize,
+        color: Color,
+    ) -> Self {
+        for y in start_y..end_y {
+            let i = x + self.width * y;
+            if let Some(c) = self.blocks.get_mut(i) {
+                c.color = color;
+            } else {
+                return self;
+            }
+        }
+        self
+    }
+
     pub fn apply<F>(self, f: F) -> Self
     where
         F: FnOnce(Self) -> Self,
